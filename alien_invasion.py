@@ -8,8 +8,12 @@ def run_game():
     #initialise game and create screen object
     pygame.init()
     #instantiate settings object ai for alien invasion
+
     ai_settings = Settings()
+
+    #screen height and width set in settings.py
     screen=pygame.display.set_mode((ai_settings.screen_width,ai_settings.screen_height))
+    
     pygame.display.set_caption("Alien Invasion")
     bg_color = (ai_settings.bg_color)
 
