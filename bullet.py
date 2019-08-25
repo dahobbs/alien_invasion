@@ -1,11 +1,17 @@
 import pygame
-from pygame.sprite import sprite
+from pygame.sprite import Sprite
 
 class Bullet(Sprite):
     """A class to manage bullets fired from the ship"""
 
     def __init__(self,ai_settings,screen,ship):
         """Create a bullet object at the ships current position"""
+        # inheritance from Sprite
+        # when you use sprites you can group releted elements
+        # at once to create a bullet instance __init__ needs
+        #the ai settings, screen, and ship instances and we call
+        #super to iniherit properly from sprite
+
         super(Bullet,self).__init__()
         self.screen = screen
 
