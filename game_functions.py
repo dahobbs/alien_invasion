@@ -36,17 +36,25 @@ def fire_bullet(ai_settings,screen,ship,bullets):
         bullets.add(new_bullet)
 
 
-def update_bullets(aliens,bullets):
+def update_bullets(ai_settings,screen,ship,aliens,bullets):
     bullets.update()
 
     #get rid of bullets that have disappeared
     for bullet in bullets.copy():
         if bullet.rect.bottom <=0:
             bullets.remove(bullet)
+    check_bullet_alien_collisions(ai_settings,screen,ship,aliens,bullets)
+
+def check_bullet_alien_collisions(ai_settings,screen,ship,aliens,bullets):
     """update position of bullets and get rid of old bullets"""
     #check for any bullets that have hit alien
     #if so get rid of both the bullet and the alien
-    collisions = pygame.sprite.groupcollide(bullets,aliens,False,True)
+    collisions = pygame.sprite.groupcollide(bullets,aliens,True,True)
+
+    if len(aliens)==0:
+        #destroy existing bullets and create new fleet
+        bullets.empty()
+        create_fleet(ai_settings,screen,ship,aliens)
 
 def get_number_aliens_x(ai_settings,alien_width):
     """determine the number of aliens that fit in a row"""
