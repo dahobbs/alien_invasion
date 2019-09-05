@@ -58,6 +58,10 @@ def check_bullet_alien_collisions(ai_settings,screen,ship,aliens,bullets):
         bullets.empty()
         create_fleet(ai_settings,screen,ship,aliens)
 
+        ship.center_ship()
+        #pause
+        sleep(0.5)
+
 def get_number_aliens_x(ai_settings,alien_width):
     """determine the number of aliens that fit in a row"""
     available_space_x = ai_settings.screen_width -2 *alien_width
@@ -117,7 +121,7 @@ def ship_hit(ai_settings,stats,screen,ship,aliens,bullets):
 
     #create a new fleet and center ship
     create_fleet(ai_settings,screen,ship,aliens)
-
+    ship.center_ship()
     #pause
     sleep(0.5)
 
@@ -129,9 +133,19 @@ def update_screen(ai_settings,screen,ship,aliens,bullets):
     for bullet in bullets.sprites():
         bullet.draw_bullet()
 
+def check_aliens_bottom(ai_settings,stats,aliens,ship,screen,bullets):
+    """check if any aliens have reached the bottom of the screen"""
+    screen_rect = screen.get_rect()
+    for alien in aliens.sprites():
+        if alien.rect.bottom >= screen_rect.bottom:
+            ship_hit(ai_settings,stats,screen,ship,aliens,bullets)
+            break
+
+
 def update_aliens(ai_settings,stats,aliens,ship,screen,bullets):
     """Update the positions of all aliens in the fleet"""
     check_fleet_edges(ai_settings,aliens)
+    check_aliens_bottom(ai_settings,stats,aliens,ship,screen,bullets)
     aliens.update()
     ship.blitme()
     aliens.draw(screen)
