@@ -2,6 +2,8 @@ import sys
 import pygame
 from bullet import Bullet
 from alien import Alien
+from time import sleep
+
 
 def check_events(ai_settings,screen,ship,bullets):
     """respond to keypresses and mouse events"""
@@ -104,6 +106,21 @@ def change_fleet_direction(ai_settings,aliens):
         alien.rect.y += ai_settings.fleet_drop_speed
     ai_settings.fleet_direction *=-1
 
+def ship_hit(ai_settings,stats,screen,ship,aliens,bullets):
+    """respond to the ship being hit by an alien"""
+    #decrement no of ships
+    stats.ships_left -=1
+
+    #empty lists of aliens and bullets
+    aliens.empty()
+    bullets.empty()
+
+    #create a new fleet and center ship
+    create_fleet(ai_settings,screen,ship,aliens)
+
+    #pause
+    sleep(0.5)
+
 def update_screen(ai_settings,screen,ship,aliens,bullets):
     #redraw the screen during each pass of the loop
     screen.fill(ai_settings.bg_color)
@@ -112,7 +129,7 @@ def update_screen(ai_settings,screen,ship,aliens,bullets):
     for bullet in bullets.sprites():
         bullet.draw_bullet()
 
-def update_aliens(ai_settings, aliens,ship,screen):
+def update_aliens(ai_settings,stats,aliens,ship,screen,bullets):
     """Update the positions of all aliens in the fleet"""
     check_fleet_edges(ai_settings,aliens)
     #aliens.update()
@@ -120,3 +137,7 @@ def update_aliens(ai_settings, aliens,ship,screen):
     aliens.draw(screen)
     #make the most recently drawn screen visible
     pygame.display.flip()
+
+    if pygame.sprite.spritecollideany(ship,aliens):
+        print("ship destroyed!!")
+        ship_hit(ai_settings,stats,screen,ship,aliens,bullets)
