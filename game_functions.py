@@ -80,6 +80,17 @@ def create_fleet(ai_settings,screen,ship,aliens):
         for alien_number in range(number_aliens_x):
             create_alien(ai_settings,screen,aliens,alien_number,row_number )
 
+def check_fleet_edges(ai_settings,aliens):
+    """respond appropriatley if the aliens reach an edge"""
+    for alien in aliens.sprites():
+        if alien.check_edges():
+            change_fleet_direction(ai_settings,aliens)
+            break
+def change_fleet_direction(ai_settings,aliens):
+    """drop the entire fleet and change the fleets direction"""
+    for alien in aliens.sprites():
+        alien.rect.y += ai_settings.fleet_drop_speed
+    ai_settings.fleet_direction *=-1
 
 def update_screen(ai_settings,screen,ship,aliens,bullets):
     #redraw the screen during each pass of the loop
@@ -89,6 +100,10 @@ def update_screen(ai_settings,screen,ship,aliens,bullets):
     for bullet in bullets.sprites():
         bullet.draw_bullet()
 
+def update_aliens(ai_settings, aliens,ship,screen):
+    """Update the positions of all aliens in the fleet"""
+    check_fleet_edges(ai_settings,aliens)
+    #aliens.update()
     ship.blitme()
     aliens.draw(screen)
     #make the most recently drawn screen visible
