@@ -132,7 +132,7 @@ def update_screen(ai_settings,screen,ship,aliens,bullets):
 def update_aliens(ai_settings,stats,aliens,ship,screen,bullets):
     """Update the positions of all aliens in the fleet"""
     check_fleet_edges(ai_settings,aliens)
-    #aliens.update()
+    aliens.update()
     ship.blitme()
     aliens.draw(screen)
     #make the most recently drawn screen visible
