@@ -59,21 +59,25 @@ def fire_bullet(ai_settings,screen,ship,bullets):
         bullets.add(new_bullet)
 
 
-def update_bullets(ai_settings,screen,ship,aliens,bullets):
+def update_bullets(ai_settings,screen,ship,aliens,bullets,sb,stats):
     bullets.update()
 
     #get rid of bullets that have disappeared
     for bullet in bullets.copy():
         if bullet.rect.bottom <=0:
             bullets.remove(bullet)
-    check_bullet_alien_collisions(ai_settings,screen,ship,aliens,bullets)
+    check_bullet_alien_collisions(ai_settings,screen,ship,aliens,bullets,sb,stats)
 
-def check_bullet_alien_collisions(ai_settings,screen,ship,aliens,bullets):
+def check_bullet_alien_collisions(ai_settings,screen,ship,aliens,bullets,sb,stats):
     """update position of bullets and get rid of old bullets"""
     #check for any bullets that have hit alien
     #if so get rid of both the bullet and the alien
     collisions = pygame.sprite.groupcollide(bullets,aliens,True,True)
 
+    if collisions:
+        for aliens in collisions.values():
+            stats.score += ai_settings.alien_points * len(aliens)
+            sb.prep_score()
     if len(aliens)==0:
         #destroy existing bullets and create new fleet
         bullets.empty()
@@ -153,10 +157,12 @@ def ship_hit(ai_settings,stats,screen,ship,aliens,bullets):
         pygame.mouse.set_visible(True)
         ## TODO: put a message on screen saying game over
 
-def update_screen(ai_settings,screen,stats,ship,aliens,bullets,play_button):
+def update_screen(ai_settings,screen,stats,ship,aliens,bullets,play_button,sb):
     #redraw the screen during each pass of the loop
     screen.fill(ai_settings.bg_color)
 
+    #draw the score information
+    sb.show_score()
     #draw the play button if the game is inactive
     if not stats.game_active:
         play_button.draw_button()
