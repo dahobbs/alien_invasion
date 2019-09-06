@@ -5,7 +5,7 @@ from alien import Alien
 from time import sleep
 
 
-def check_events(ai_settings,screen,stats,play_button,ship,bullets):
+def check_events(ai_settings,screen,stats,play_button,ship,aliens,bullets):
     """respond to keypresses and mouse events"""
     #watch for keyboard and mouse events
     for event in pygame.event.get():
@@ -17,12 +17,25 @@ def check_events(ai_settings,screen,stats,play_button,ship,bullets):
             check_keyup_events(event,ship)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x,mouse_y = pygame.mouse.get_pos()
-            check_play_button(stats,play_button,mouse_x,mouse_y)
+            check_play_button(ai_settings,screen,stats,play_button,ship,aliens,bullets,mouse_x,mouse_y)
 
-def check_play_button(stats, play_button, mouse_x, mouse_y):
+def check_play_button(ai_settings,screen,stats,play_button,ship,aliens,bullets,mouse_x,mouse_y):
     """start new game when player clicks play"""
-    if play_button.rect.collidepoint(mouse_x, mouse_y):
+    button_clicked =  play_button.rect.collidepoint(mouse_x, mouse_y)
+    if button_clicked and not stats.game_active:
+        #reset game settings
+        ai_settings.initilise_dynamic_settings()
+        #hide the mouse cursor
+        pygame.mouse.set_visible(False)
+        stats.reset_stats()
         stats.game_active = True
+
+        #empty list of aliens and bullets
+        aliens.empty()
+        bullets.empty()
+
+        #crete and new fleet and center ship
+        ship.center_ship()
 
 def check_keydown_events(event,ai_settings,screen,ship,bullets):
     if event.key == pygame.K_RIGHT:
@@ -64,6 +77,7 @@ def check_bullet_alien_collisions(ai_settings,screen,ship,aliens,bullets):
     if len(aliens)==0:
         #destroy existing bullets and create new fleet
         bullets.empty()
+        ai_settings.increase_speed()
         create_fleet(ai_settings,screen,ship,aliens)
 
         ship.center_ship()
@@ -135,6 +149,8 @@ def ship_hit(ai_settings,stats,screen,ship,aliens,bullets):
         sleep(0.5)
     else:
         stats.game_active = False
+        #enable mouse pointer to appear
+        pygame.mouse.set_visible(True)
         ## TODO: put a message on screen saying game over
 
 def update_screen(ai_settings,screen,stats,ship,aliens,bullets,play_button):
