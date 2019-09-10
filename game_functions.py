@@ -34,6 +34,7 @@ def check_play_button(ai_settings,screen,stats,sb,play_button,ship,aliens,bullet
         sb.prep_score()
         sb.prep_high_score()
         sb.prep_level()
+        sb.prep_ships()
 
         #empty list of aliens and bullets
         aliens.empty()
@@ -152,12 +153,12 @@ def change_fleet_direction(ai_settings,aliens):
         alien.rect.y += ai_settings.fleet_drop_speed
     ai_settings.fleet_direction *=-1
 
-def ship_hit(ai_settings,stats,screen,ship,aliens,bullets):
+def ship_hit(ai_settings,stats,screen,ship,aliens,bullets,sb):
     """respond to the ship being hit by an alien"""
     if stats.ships_left > 0:
         #decrement no of ships
         stats.ships_left -=1
-
+        sb.prep_ships()
         #empty lists of aliens and bullets
         aliens.empty()
         bullets.empty()
@@ -189,19 +190,19 @@ def update_screen(ai_settings,screen,stats,ship,aliens,bullets,play_button,sb):
         bullet.draw_bullet()
 
 
-def check_aliens_bottom(ai_settings,stats,aliens,ship,screen,bullets):
+def check_aliens_bottom(ai_settings,stats,aliens,ship,screen,bullets,sb):
     """check if any aliens have reached the bottom of the screen"""
     screen_rect = screen.get_rect()
     for alien in aliens.sprites():
         if alien.rect.bottom >= screen_rect.bottom:
-            ship_hit(ai_settings,stats,screen,ship,aliens,bullets)
+            ship_hit(ai_settings,stats,screen,ship,aliens,bullets,sb)
             break
 
 
-def update_aliens(ai_settings,stats,aliens,ship,screen,bullets):
+def update_aliens(ai_settings,stats,aliens,ship,screen,bullets,sb):
     """Update the positions of all aliens in the fleet"""
     check_fleet_edges(ai_settings,aliens)
-    check_aliens_bottom(ai_settings,stats,aliens,ship,screen,bullets)
+    check_aliens_bottom(ai_settings,stats,aliens,ship,screen,bullets,sb)
     aliens.update()
     ship.blitme()
     aliens.draw(screen)
@@ -209,4 +210,4 @@ def update_aliens(ai_settings,stats,aliens,ship,screen,bullets):
     pygame.display.flip()
 
     if pygame.sprite.spritecollideany(ship,aliens):
-        ship_hit(ai_settings,stats,screen,ship,aliens,bullets)
+        ship_hit(ai_settings,stats,screen,ship,aliens,bullets,sb)
