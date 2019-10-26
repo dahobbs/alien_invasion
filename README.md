@@ -1,2 +1,3 @@
 # alien_invasion
-alien invasion game 
+alien invasion game from the book python crash course
+by Eric Matthes
